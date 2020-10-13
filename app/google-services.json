@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "831173006952",
+    "firebase_url": "https://track-my-family-220c4.firebaseio.com",
+    "project_id": "track-my-family-220c4",
+    "storage_bucket": "track-my-family-220c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831173006952:android:e34700de4ef30f83780ddd",
+        "android_client_info": {
+          "package_name": "com.example.trackmyfamily"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831173006952-tdfg92bq2lemajlf4jdsr5o787m316pd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3rRQbuodFxhey3r5PLoSq0J227XwfGB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831173006952-tdfg92bq2lemajlf4jdsr5o787m316pd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
