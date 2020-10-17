@@ -1,44 +1,32 @@
-package com.example.trackmyfamily;
+package com.example.ninoapp;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class TrackerService extends Service {
 
-    private boolean onTaskRemovedCalled;
+    private boolean onTaskRemovedCalled = false;
     private String uniq_id;
     private String child_num;
+    public static boolean serviceRunning = false;
+    private LocationCallback locationCallback;
+    private FusedLocationProviderClient client;
 
     @Nullable
     @Override
@@ -54,6 +42,8 @@ public class TrackerService extends Service {
         Log.v(MainActivity.APP_LOG_TAG,"in Trackerservice, on start command");
 
         Log.v(MainActivity.APP_LOG_TAG,"in Trackerservice, on start command, intent = "+intent);
+
+        serviceRunning = true;
 
         if(intent!=null){
             if(intent.hasExtra("uniq_id")){
@@ -80,10 +70,29 @@ public class TrackerService extends Service {
     }
 
     @Override
+    public boolean stopService(Intent name) {
+        Log.v(MainActivity.APP_LOG_TAG,"in tracker service, onstop service");
+        return super.stopService(name);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
+        Log.v(MainActivity.APP_LOG_TAG,"in tracker service, onDestroy");
+
+
+        if(MainActivity.stopServiceCalled){
+            Log.v(MainActivity.APP_LOG_TAG,"in tracker service, stop service called = true");
+            client.removeLocationUpdates(locationCallback);
+            this.stopSelf();
+            return;
+        }
+
         if(!onTaskRemovedCalled) {
+
+            Log.v(MainActivity.APP_LOG_TAG,"in tracker service, onTask removed not called");
+
             Intent restartService = new Intent("RestartService");
             sendBroadcast(restartService);
         }
@@ -93,8 +102,17 @@ public class TrackerService extends Service {
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         onTaskRemovedCalled = true;
-        Intent restartService = new Intent("RestartService");
-        sendBroadcast(restartService);
+        Log.v(MainActivity.APP_LOG_TAG,"in tracker service, ontask removed");
+
+
+        if(MainActivity.stopServiceCalled){
+            Log.v(MainActivity.APP_LOG_TAG,"in tracker service, ontask removed, stop service called = true");
+            return;
+        }else {
+            Log.v(MainActivity.APP_LOG_TAG,"in tracker service, ontask removed, stop service called = false, flow 2");
+            Intent restartService = new Intent("RestartService");
+            sendBroadcast(restartService);
+        }
     }
 
     private void requestLocationUpdates() {
@@ -106,7 +124,7 @@ public class TrackerService extends Service {
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
+        client = LocationServices.getFusedLocationProviderClient(this);
         final String path = uniq_id + "/" + child_num;
 
 
@@ -129,7 +147,7 @@ public class TrackerService extends Service {
         }
 
 
-        client.requestLocationUpdates(locationRequest, new LocationCallback() {
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
 
@@ -147,6 +165,8 @@ public class TrackerService extends Service {
                     databaseReference.setValue(location);
                 }
             }
-        }, null);
+        };
+
+        client.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 }

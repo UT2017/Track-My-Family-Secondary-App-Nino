@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.trackmyfamily">
+    package="com.example.ninoapp">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -11,18 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.ninoapp.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <service android:name=".TrackerService"
+        <service android:name="com.example.ninoapp.TrackerService"
             android:enabled="true"
             />
 
-        <receiver android:name=".RestartService"
+        <receiver android:name="com.example.ninoapp.RestartService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.RECIEVE_BOOT_COMPLETED">

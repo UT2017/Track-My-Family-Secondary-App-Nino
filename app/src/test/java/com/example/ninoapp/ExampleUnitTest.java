@@ -1,4 +1,4 @@
-package com.example.trackmyfamily;
+package com.example.ninoapp;
 
 import org.junit.Test;
 
