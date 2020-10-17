@@ -21,6 +21,7 @@
         <service android:name="com.example.ninoapp.TrackerService"
             android:enabled="true"
             />
+        
 
         <receiver android:name="com.example.ninoapp.RestartService"
             android:enabled="true"
