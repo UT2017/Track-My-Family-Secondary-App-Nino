@@ -30,6 +30,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:11.2.0'
     implementation 'com.google.firebase:firebase-database:11.2.0'
     implementation 'com.google.android.gms:play-services-location:11.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

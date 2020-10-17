@@ -36,47 +36,70 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class TrackerService extends Service {
 
+    private boolean onTaskRemovedCalled;
+    private String uniq_id;
+    private String child_num;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Log.v(MainActivity.APP_LOG_TAG,"in Trackerservice, in on Bind");
         return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+
+        Log.v(MainActivity.APP_LOG_TAG,"in Trackerservice, on start command");
+
+        Log.v(MainActivity.APP_LOG_TAG,"in Trackerservice, on start command, intent = "+intent);
+
+        if(intent!=null){
+            if(intent.hasExtra("uniq_id")){
+                Log.v(MainActivity.APP_LOG_TAG,"in Trackerservice, on start command, intent has extra uniq id");
+                uniq_id = intent.getStringExtra("uniq_id");
+            }
+            if(intent.hasExtra("child_num")){
+                Log.v(MainActivity.APP_LOG_TAG,"in Trackerservice, on start command, intent has extra child_num");
+                child_num = intent.getStringExtra("child_num");
+            }
+        }
+        requestLocationUpdates();
+        onTaskRemovedCalled = false;
+
+        super.onStartCommand(intent,flags,startId);
+        return START_STICKY;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(MainActivity.APP_LOG_TAG,"in tracker service, onCreate");
 
-        Log.v(MainActivity.APP_LOG_TAG,"in service onCreate");
-
-        loginToFirebase();
     }
 
-    private void loginToFirebase() {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
+        if(!onTaskRemovedCalled) {
+            Intent restartService = new Intent("RestartService");
+            sendBroadcast(restartService);
+        }
+    }
 
-        Log.v(MainActivity.APP_LOG_TAG,"in logintofirebase");
-
-
-        String email = getString(R.string.firebase_email);
-        String pwd = getString(R.string.firebase_password);
-
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.v(MainActivity.APP_LOG_TAG, "Firbase login success");
-                    requestLocationUpdates();
-                } else {
-                    Log.v(MainActivity.APP_LOG_TAG, "Firbase login failed");
-                }
-            }
-        });
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        onTaskRemovedCalled = true;
+        Intent restartService = new Intent("RestartService");
+        sendBroadcast(restartService);
     }
 
     private void requestLocationUpdates() {
 
-        Log.v(MainActivity.APP_LOG_TAG,"in service requetLocationUpdates");
+        Log.v(MainActivity.APP_LOG_TAG,"in tracker service, requetLocationUpdates");
 
         final LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
@@ -84,7 +107,11 @@ public class TrackerService extends Service {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        final String path = getString(R.string.firebase_path) + "/" + getString(R.string.transport_id);
+        final String path = uniq_id + "/" + child_num;
+
+
+        Log.v(MainActivity.APP_LOG_TAG,"in Trackerservice, in request location updates, path = "+path);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
 
@@ -100,16 +127,23 @@ public class TrackerService extends Service {
             //
             return;
         }
+
+
         client.requestLocationUpdates(locationRequest, new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
 
-                Log.v(MainActivity.APP_LOG_TAG,"in service onLocationResult");
+                Log.v(MainActivity.APP_LOG_TAG,"in tracker service, in  onLocationResult");
+                Log.v(MainActivity.APP_LOG_TAG, "in tracker service, in onLocationResult, path = "+path);
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(path);
+                Log.v(MainActivity.APP_LOG_TAG, "in tracker service, in onLocationResult, data base ref = "+databaseReference);
+
                 Location location = locationResult.getLastLocation();
+                Log.v(MainActivity.APP_LOG_TAG, "in tracker service, in onLocationResult, location = "+location);
+
                 if(location!=null){
-                    Log.v(MainActivity.APP_LOG_TAG, "location = "+location);
+                    Log.v(MainActivity.APP_LOG_TAG, "in tracker service, in onLocationResult, location is not null, setting value");
                     databaseReference.setValue(location);
                 }
             }
