@@ -30,30 +30,39 @@
 
         <TextView
             android:id="@+id/textViewWelcome"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginLeft="32dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="84dp"
-            android:gravity="center"
-            android:text="Welcome to Nino App"
+            android:layout_marginTop="32dp"
+            android:layout_marginRight="32dp"
+            android:text="Welcome to Nino App!"
             android:textColor="@android:color/white"
-            android:textSize="40sp"
+            android:textSize="36sp"
+            android:gravity="center"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+
+            android:ellipsize="none"
+            android:maxLines="100"
+            android:scrollHorizontally="false"
+
+            />
 
         <TextView
             android:id="@+id/textViewCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="64dp"
-            android:layout_marginLeft="64dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="36dp"
 
             android:gravity="center"
-
+            android:ellipsize="none"
+            android:maxLines="100"
+            android:scrollHorizontally="false"
             android:text="Enter code"
             android:textColor="@android:color/white"
-            android:textSize="36sp"
+            android:textSize="24sp"
             app:layout_constraintStart_toStartOf="@+id/textViewWelcome"
             app:layout_constraintTop_toBottomOf="@+id/textViewWelcome" />
 
@@ -77,11 +86,13 @@
             android:id="@+id/textViewChild"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_marginTop="52dp"
+            android:ellipsize="none"
+            android:maxLines="100"
+            android:scrollHorizontally="false"
+            android:layout_marginTop="36dp"
             android:text="Enter child number"
             android:textColor="@android:color/white"
-            android:textSize="36sp"
+            android:textSize="24sp"
             app:layout_constraintStart_toStartOf="@+id/editTextCode"
             app:layout_constraintTop_toBottomOf="@+id/editTextCode" />
 
@@ -103,15 +114,19 @@
 
         <Button
             android:id="@+id/next_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
-            android:layout_marginBottom="32dp"
-            android:text="Next"
+
+            android:text="Submit details"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextChild" />
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextChild"
+             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

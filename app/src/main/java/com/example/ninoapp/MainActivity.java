@@ -235,35 +235,34 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        if(code_text!=null&&child_text!=null) {
 
-        String path = code_text + "/" + child_text;
+            String path = code_text + "/" + child_text;
 
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            Log.v(MainActivity.APP_LOG_TAG, "in onRefreshClicked, data base ref = " + databaseReference);
 
-
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        Log.v(MainActivity.APP_LOG_TAG, "in onRefreshClicked, data base ref = "+databaseReference);
-
-        if(databaseReference!=null){
-            Log.v(MainActivity.APP_LOG_TAG, "in onRefreshClicked, going for kill 2  = kill DB ");
-            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()){
-                        Log.v(APP_LOG_TAG,"in on Data change, removing value");
-                        Log.v(APP_LOG_TAG,"in on Data change, removing value, code text = "+code_text);
-                        Log.v(APP_LOG_TAG,"in on Data change, removing value, child num text = "+child_text);
-                        dataSnapshot.getRef().child(code_text).child(child_text).setValue(null);
-                        dataSnapshot.getRef().child(code_text).child(child_text).removeValue();
+            if (databaseReference != null) {
+                Log.v(MainActivity.APP_LOG_TAG, "in onRefreshClicked, going for kill 2  = kill DB ");
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Log.v(APP_LOG_TAG, "in on Data change, removing value");
+                            Log.v(APP_LOG_TAG, "in on Data change, removing value, code text = " + code_text);
+                            Log.v(APP_LOG_TAG, "in on Data change, removing value, child num text = " + child_text);
+                            dataSnapshot.getRef().child(code_text).child(child_text).removeValue();
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
+            }
+
         }
-
 
         Log.v(APP_LOG_TAG,"in on refresh, going for kill 3 - update ui back to older levels");
 
