@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         codeTv.setText("Enter code");
         childNumTv.setText("Enter child number");
         nextButton.setVisibility(View.VISIBLE);
-        welcomeTv.setText("Welcome to Nino App");
+        welcomeTv.setText("Welcome to Nino App!");
 
         checkLocationPermissions();
     }
